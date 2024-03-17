@@ -12,7 +12,7 @@ struct MusicPlayView: View {
     @EnvironmentObject var controller: MusicController
     @Environment(\.dismiss) var dismiss
     @State var music: Music
-    let audioURL: URL
+    @State var currentSong: String
     var body: some View {
         NavigationStack{
             ScrollView{
@@ -72,7 +72,7 @@ struct MusicPlayView: View {
                         Button(action: {
                             
                         }, label: {
-                            Image(systemName: controller.isplaying ? "pause.fill" : "play.fill")
+                            Image(systemName:  controller.isplaying ? "pause.fill" : "play.fill")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.black)
                                 .padding(25)
@@ -92,7 +92,16 @@ struct MusicPlayView: View {
                                 .clipShape(Circle())
                                 .shadow(color: .yellow.opacity(0.5), radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/, x: 5, y: 3)
                                 .onTapGesture {
-                                    controller.isplaying ? controller.stopAudio() : controller.playAudio()
+                                    if controller.isplaying{
+                                        Task{
+                                            await controller.stopAudio()
+                                        }
+                                    }else{
+                                        Task{
+                                            await controller.playAudio(name: currentSong)
+                                        }
+                                        
+                                    }
                                 }
                         })
                         
@@ -122,39 +131,39 @@ struct MusicPlayView: View {
         }
         .navigationBarBackButtonHidden()
         .toolbar {
+            
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     dismiss()
                 } label: {
-                    Image("left")
-                        .resizable()
-                        .frame(width: 30, height: 30)
+                    Image(systemName: "chevron.backward")
+                        .font(.system(size: 15))
                         .foregroundColor(.black)
                 }
             }
         }
         .onAppear(perform: {
-            fetchAndPlayAudio()
+            Task{
+               await fetchAndPlayAudio()
+                await controller.playAudio(name: currentSong)
+            }
+            controller.isplaying = false
+            controller.currentSong = currentSong
+            
         })
         .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
             controller.updateProcess()
         }
     }
-    private func fetchAndPlayAudio() {
-        let task = URLSession.shared.dataTask(with: audioURL) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Failed to fetch audio:", error ?? "Unknown error")
-                return
-            }
-            
-            do {
-                self.controller.player = try AVAudioPlayer(data: data)
-                controller.totalTime = controller.player?.duration ?? 0.0
-            } catch {
-                print("Failed to create audio player:", error)
-            }
+    private func fetchAndPlayAudio() async {
+        do {
+            let (data, _) = try await URLSession.shared.data(from: URL(string: music.url)!)
+            let audioPlayer = try AVAudioPlayer(data: data)
+            controller.player = audioPlayer
+            controller.totalTime = audioPlayer.duration
+        } catch {
+            print("Error fetching or playing audio:", error)
         }
-        task.resume()
     }
 }
 
@@ -162,7 +171,7 @@ struct MusicPlayView: View {
     MusicPlayView(music: Music(name: "24K Magic",
                                singer: "Bruno Mars",
                                url: "https://firebasestorage.googleapis.com/v0/b/musicapp-acd69.appspot.com/o/Bruno%20Mars%20-%2024K%20Magic%20(Official%20Music%20Video).mp3?alt=media&token=1254de08-d469-4ac8-93f4-d4b02cddc90a",
-                               img :"https://kenh14cdn.com/thumb_w/660/2018/1/31/photo-1-15173842175492010486171.jpg"),
-                  audioURL: URL(string: "https://firebasestorage.googleapis.com/v0/b/musicapp-acd69.appspot.com/o/Bruno%20Mars%20-%2024K%20Magic%20(Official%20Music%20Video).mp3?alt=media&token=1254de08-d469-4ac8-93f4-d4b02cddc90a")!)
+                               img :"https://kenh14cdn.com/thumb_w/660/2018/1/31/photo-1-15173842175492010486171.jpg"),currentSong: "24K Magic"
+                  )
     .environmentObject(MusicController())
 }

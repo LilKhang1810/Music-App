@@ -14,7 +14,7 @@ struct MusicHomeView: View {
             ScrollView(showsIndicators: false) {
                 VStack{
                     ForEach(controller.musics, id: \.self) { music in
-                        NavigationLink(destination: MusicPlayView( music: Music(name: music.name, singer: music.singer, url: music.url, img: music.img), audioURL: URL(string: music.url)!).environmentObject(controller)) {
+                        NavigationLink(destination: MusicPlayView( music: Music(name: music.name, singer: music.singer, url: music.url, img: music.img), currentSong: music.name).environmentObject(controller)) {
                             HStack{
                                 AnimatedImage(url: URL(string: music.img))
                                     .resizable()

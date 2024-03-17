@@ -14,34 +14,42 @@ class MusicController: ObservableObject{
     @Published var totalTime: TimeInterval = 0.0
     @Published var currentTime: TimeInterval = 0.0
     @Published var isplaying = false
+    @Published var currentSongURL: URL?
+    @Published var currentSong: String?
     private var db = Firestore.firestore()
     init(){
-        fetchMusicData()
+        Task{
+            await fetchMusicData()
+        }
+        
     }
-    func fetchMusicData(){
-        let ref = db.collection("Music")
-        ref.addSnapshotListener { snapshot, error in
-            guard error == nil else{
-                return
-            }
-            if let snapshot = snapshot{
-                self.musics = snapshot.documents.compactMap({ document in
-                    let data = document.data()
-                    let name = data["name"] as? String ?? ""
-                    let singer = data["singer"] as? String ?? ""
-                    let url = data["url"] as? String ?? ""
-                    let img = data["img"] as? String ?? ""
-                    return Music(name: name, singer: singer, url: url, img: img)
-                })
-            }
+    func fetchMusicData() async {
+        do {
+            let snapshot = try await db.collection("Music").getDocuments()
+            self.musics = snapshot.documents.compactMap({ document in
+                let data = document.data()
+                let name = data["name"] as? String ?? ""
+                let singer = data["singer"] as? String ?? ""
+                let url = data["url"] as? String ?? ""
+                let img = data["img"] as? String ?? ""
+                return Music(name: name, singer: singer, url: url, img: img)
+            })
+        } catch {
+            print("Error fetching music data:", error)
         }
     }
     
-    func playAudio() {
+    
+    func playAudio(name: String) async {
+        
         player?.play()
         isplaying = true
+        
+        
     }
-    func stopAudio(){
+    
+    
+    func stopAudio()async{
         player?.stop()
         isplaying = false
     }
