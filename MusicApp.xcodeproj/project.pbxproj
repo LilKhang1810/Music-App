@@ -21,7 +21,8 @@
 		224013F32BA3F21C00703D86 /* MusicHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224013F22BA3F21C00703D86 /* MusicHomeView.swift */; };
 		224013F52BA3F46E00703D86 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 224013F42BA3F46E00703D86 /* GoogleService-Info.plist */; };
 		224013F72BA4001800703D86 /* MusicPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224013F62BA4001800703D86 /* MusicPlayView.swift */; };
-		224013F92BA40DE500703D86 /* besideyou.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 224013F82BA40DE500703D86 /* besideyou.mp3 */; };
+		228FE7502BA891A400D09DA9 /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228FE74F2BA891A400D09DA9 /* BlurView.swift */; };
+		228FE7522BA892C400D09DA9 /* MiniPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228FE7512BA892C400D09DA9 /* MiniPlayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +36,8 @@
 		224013F22BA3F21C00703D86 /* MusicHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicHomeView.swift; sourceTree = "<group>"; };
 		224013F42BA3F46E00703D86 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		224013F62BA4001800703D86 /* MusicPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayView.swift; sourceTree = "<group>"; };
-		224013F82BA40DE500703D86 /* besideyou.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = besideyou.mp3; path = ../../../../Downloads/music/besideyou.mp3; sourceTree = "<group>"; };
+		228FE74F2BA891A400D09DA9 /* BlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
+		228FE7512BA892C400D09DA9 /* MiniPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,12 +79,13 @@
 				224013D42BA3F02F00703D86 /* MusicAppApp.swift */,
 				224013D62BA3F02F00703D86 /* ContentView.swift */,
 				224013D82BA3F03000703D86 /* Assets.xcassets */,
-				224013F82BA40DE500703D86 /* besideyou.mp3 */,
 				224013DA2BA3F03000703D86 /* Preview Content */,
 				224013EE2BA3F0B200703D86 /* MusicModel.swift */,
 				224013F02BA3F0F400703D86 /* MusicController.swift */,
 				224013F22BA3F21C00703D86 /* MusicHomeView.swift */,
 				224013F62BA4001800703D86 /* MusicPlayView.swift */,
+				228FE74F2BA891A400D09DA9 /* BlurView.swift */,
+				228FE7512BA892C400D09DA9 /* MiniPlayer.swift */,
 			);
 			path = MusicApp;
 			sourceTree = "<group>";
@@ -167,7 +170,6 @@
 				224013DC2BA3F03000703D86 /* Preview Assets.xcassets in Resources */,
 				224013D92BA3F03000703D86 /* Assets.xcassets in Resources */,
 				224013F52BA3F46E00703D86 /* GoogleService-Info.plist in Resources */,
-				224013F92BA40DE500703D86 /* besideyou.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,9 +181,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				224013F72BA4001800703D86 /* MusicPlayView.swift in Sources */,
+				228FE7502BA891A400D09DA9 /* BlurView.swift in Sources */,
 				224013D72BA3F02F00703D86 /* ContentView.swift in Sources */,
 				224013F12BA3F0F400703D86 /* MusicController.swift in Sources */,
 				224013D52BA3F02F00703D86 /* MusicAppApp.swift in Sources */,
+				228FE7522BA892C400D09DA9 /* MiniPlayer.swift in Sources */,
 				224013F32BA3F21C00703D86 /* MusicHomeView.swift in Sources */,
 				224013EF2BA3F0B200703D86 /* MusicModel.swift in Sources */,
 			);

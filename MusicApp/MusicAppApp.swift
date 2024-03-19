@@ -18,9 +18,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct MusicAppApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var controller: MusicController = MusicController()
     var body: some Scene {
         WindowGroup {
             MusicHomeView()
+                .environmentObject(MusicController())
         }
     }
 }

@@ -12,7 +12,7 @@ struct MusicPlayView: View {
     @EnvironmentObject var controller: MusicController
     @Environment(\.dismiss) var dismiss
     @State var music: Music
-    @State var currentSong: String
+    @State var currentMusic: String
     var body: some View {
         NavigationStack{
             ScrollView{
@@ -98,7 +98,7 @@ struct MusicPlayView: View {
                                         }
                                     }else{
                                         Task{
-                                            await controller.playAudio(name: currentSong)
+                                            await controller.playAudio(name: music.name)
                                         }
                                         
                                     }
@@ -145,20 +145,20 @@ struct MusicPlayView: View {
         .onAppear(perform: {
             Task{
                await fetchAndPlayAudio()
-                await controller.playAudio(name: currentSong)
+                await controller.playAudio(name: music.name)
             }
-            controller.isplaying = false
-            controller.currentSong = currentSong
+            controller.isplaying = true
+            
             
         })
         .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
             controller.updateProcess()
         }
     }
-    private func fetchAndPlayAudio() async {
+    func fetchAndPlayAudio() async {
         do {
-            let (data, _) = try await URLSession.shared.data(from: URL(string: music.url)!)
-            let audioPlayer = try AVAudioPlayer(data: data)
+            let (data,_) = try await URLSession.shared.data(from: URL(string: music.url)!)
+            let audioPlayer = try AVAudioPlayer(data:data)
             controller.player = audioPlayer
             controller.totalTime = audioPlayer.duration
         } catch {
@@ -171,7 +171,7 @@ struct MusicPlayView: View {
     MusicPlayView(music: Music(name: "24K Magic",
                                singer: "Bruno Mars",
                                url: "https://firebasestorage.googleapis.com/v0/b/musicapp-acd69.appspot.com/o/Bruno%20Mars%20-%2024K%20Magic%20(Official%20Music%20Video).mp3?alt=media&token=1254de08-d469-4ac8-93f4-d4b02cddc90a",
-                               img :"https://kenh14cdn.com/thumb_w/660/2018/1/31/photo-1-15173842175492010486171.jpg"),currentSong: "24K Magic"
+                               img :"https://kenh14cdn.com/thumb_w/660/2018/1/31/photo-1-15173842175492010486171.jpg"), currentMusic: "24K Magic"
                   )
     .environmentObject(MusicController())
 }

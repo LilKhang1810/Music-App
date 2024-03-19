@@ -15,37 +15,48 @@ class MusicController: ObservableObject{
     @Published var currentTime: TimeInterval = 0.0
     @Published var isplaying = false
     @Published var currentSongURL: URL?
-    @Published var currentSong: String?
+    @Published var currentSong: Music?
     private var db = Firestore.firestore()
     init(){
-        Task{
-            await fetchMusicData()
+        fetchMusicData()
+    }
+    func fetchMusicData(){
+        
+        let musicDB = db.collection("Music")
+        musicDB.addSnapshotListener(includeMetadataChanges: true) { snapshot, error in
+            guard error == nil else{
+                return
+            }
+            if let snapshot = snapshot{
+                self.musics = snapshot.documents.compactMap({ document in
+                    let data = document.data()
+                    let name = data["name"] as? String ?? ""
+                    let singer = data["singer"] as? String ?? ""
+                    let url = data["url"] as? String ?? ""
+                    let img = data["img"] as? String ?? ""
+                    return Music(name: name, singer: singer, url: url, img: img)
+                })
+            }
         }
         
     }
-    func fetchMusicData() async {
+    
+    func fetchAndPlayAudio(url: String) async {
         do {
-            let snapshot = try await db.collection("Music").getDocuments()
-            self.musics = snapshot.documents.compactMap({ document in
-                let data = document.data()
-                let name = data["name"] as? String ?? ""
-                let singer = data["singer"] as? String ?? ""
-                let url = data["url"] as? String ?? ""
-                let img = data["img"] as? String ?? ""
-                return Music(name: name, singer: singer, url: url, img: img)
-            })
+            let (data,_) = try await URLSession.shared.data(from: URL(string: url)!)
+            let audioPlayer = try AVAudioPlayer(data:data)
+            player = audioPlayer
+            totalTime = audioPlayer.duration
         } catch {
-            print("Error fetching music data:", error)
+            print("Error fetching or playing audio:", error)
         }
     }
-    
-    
     func playAudio(name: String) async {
         
         player?.play()
         isplaying = true
         
-        
+
     }
     
     
