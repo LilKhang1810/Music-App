@@ -23,8 +23,10 @@ struct MusicHomeView: View {
                                     isMiniPlayerPresented = true
                                     selectedMusic = music
                                     Task{
-                                        await fetchAndPlayAudio()
+                                        await controller.fetchAndPlayAudio(url: music.url)
+                                    
                                     }
+                                    controller.isplaying = true
                                 },
                                 label: {
                                     HStack{
@@ -51,35 +53,40 @@ struct MusicHomeView: View {
                                     .frame(maxWidth: .infinity,alignment: .leading)
                                     .padding()
                                 })
+                            
                         }
                         
                     }
-                    
+                    .padding(.bottom,80)
                 }
                 
                 if selectedMusic != nil {
                     MiniPlayer(music: $selectedMusic)
+                        .environmentObject(controller)
                         .offset(y:370)
                 }
                 
             }
         }
-    }
-    func fetchAndPlayAudio() async {
-        do {
-            if let selectedMusic = selectedMusic, let url = URL(string: selectedMusic.url) {
-                let (data,_) = try await URLSession.shared.data(from: url)
-                let audioPlayer = try AVAudioPlayer(data:data)
-                controller.player = audioPlayer
-                controller.player?.play()
-                controller.totalTime = audioPlayer.duration
-            } else {
-                print("No selected music to play") // Handle case where selectedMusic is nil
-            }
-        } catch {
-            print("Error fetching or playing audio:", error)
+        .onAppear{
+            print(controller.isplaying)
         }
     }
+//    func fetchAndPlayAudio() async {
+//        do {
+//            if let selectedMusic = selectedMusic, let url = URL(string: selectedMusic.url) {
+//                let (data,_) = try await URLSession.shared.data(from: url)
+//                let audioPlayer = try AVAudioPlayer(data:data)
+//                controller.player = audioPlayer
+//                controller.player?.play()
+//                controller.totalTime = audioPlayer.duration
+//            } else {
+//                print("No selected music to play") // Handle case where selectedMusic is nil
+//            }
+//        } catch {
+//            print("Error fetching or playing audio:", error)
+//        }
+//    }
 }
 #Preview {
     MusicHomeView()

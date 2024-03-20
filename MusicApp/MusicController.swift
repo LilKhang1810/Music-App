@@ -46,7 +46,9 @@ class MusicController: ObservableObject{
             let (data,_) = try await URLSession.shared.data(from: URL(string: url)!)
             let audioPlayer = try AVAudioPlayer(data:data)
             player = audioPlayer
+            player?.play()
             totalTime = audioPlayer.duration
+            isplaying = true
         } catch {
             print("Error fetching or playing audio:", error)
         }
@@ -58,8 +60,6 @@ class MusicController: ObservableObject{
         
 
     }
-    
-    
     func stopAudio()async{
         player?.stop()
         isplaying = false
