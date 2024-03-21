@@ -16,10 +16,8 @@ class MusicController: ObservableObject{
     @Published var isplaying = false
     @Published var currentSongURL: URL?
     @Published var currentSong: Music?
+    @Published var currentMusicIndex:Int = 0
     private var db = Firestore.firestore()
-    init(){
-        fetchMusicData()
-    }
     func fetchMusicData(){
         
         let musicDB = db.collection("Music")
@@ -54,11 +52,8 @@ class MusicController: ObservableObject{
         }
     }
     func playAudio(name: String) async {
-        
         player?.play()
         isplaying = true
-        
-
     }
     func stopAudio()async{
         player?.stop()
@@ -75,5 +70,21 @@ class MusicController: ObservableObject{
         let minute = Int(time) / 60
         let seconds = Int(time) % 60
         return String(format: "%02d:%02d", minute, seconds)
+    }
+    func playNextSong() -> Music? {
+        guard currentMusicIndex < musics.count - 1 else {
+            print("End of playlist reached")
+            return nil
+        }
+        
+        currentMusicIndex += 1
+        currentSong = musics[currentMusicIndex]
+        
+        // Cập nhật URL của bài hát mới
+        guard let newMusic = currentSong else {
+            return nil
+        }
+        print("Playing next song: \(newMusic.name) by \(newMusic.singer)")
+        return newMusic
     }
 }

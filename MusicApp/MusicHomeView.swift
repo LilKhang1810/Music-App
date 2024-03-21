@@ -70,6 +70,7 @@ struct MusicHomeView: View {
         }
         .onAppear{
             print(controller.isplaying)
+            controller.fetchMusicData()
         }
     }
 //    func fetchAndPlayAudio() async {

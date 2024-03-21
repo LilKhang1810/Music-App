@@ -9,7 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 import AVFoundation
 struct MusicPlayView: View {
-    @EnvironmentObject var controller: MusicController
+    @ObservedObject var controller : MusicController
     @Environment(\.dismiss) var dismiss
     @State var music: Music
     @State var currentMusic: String
@@ -17,16 +17,23 @@ struct MusicPlayView: View {
         NavigationStack{
             ScrollView{
                 VStack{
-                    AnimatedImage(url: URL(string: music.img))
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.compact.down")
+                            .padding(.top)
+                            .foregroundColor(.black)
+                    }
+                    AnimatedImage(url: URL(string: controller.currentSong?.img ?? ""))
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 350,height: 350)
                         .padding()
                     VStack(alignment:.leading){
-                        Text(music.name)
+                        Text(controller.currentSong?.name ?? "")
                             .font(.system(size: 25))
                             .bold()
-                        Text(music.singer)
+                        Text(controller.currentSong?.singer ?? "")
                             .font(.system(size: 18))
                     }
                     .frame(maxWidth: .infinity,alignment: .leading)
@@ -70,7 +77,19 @@ struct MusicPlayView: View {
                         })
                         
                         Button(action: {
-                            
+                            if controller.isplaying {
+                                Task {
+                                    await controller.stopAudio()
+                                }
+                            } else {
+                                Task {
+                                    await controller.playAudio(name: music.name)
+                                }
+                                controller.isplaying.toggle() // Update isPlaying state
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // Delay UI update by 0.1 seconds
+                                // Update button image based on isPlaying
+                            }
                         }, label: {
                             Image(systemName:  controller.isplaying ? "pause.fill" : "play.fill")
                                 .font(.system(size: 24, weight: .bold))
@@ -91,22 +110,11 @@ struct MusicPlayView: View {
                                 }
                                 .clipShape(Circle())
                                 .shadow(color: .yellow.opacity(0.5), radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/, x: 5, y: 3)
-                                .onTapGesture {
-                                    if controller.isplaying{
-                                        Task{
-                                            await controller.stopAudio()
-                                        }
-                                    }else{
-                                        Task{
-                                            await controller.playAudio(name: music.name)
-                                        }
-                                        
-                                    }
-                                }
+                            
                         })
                         
                         Button(action: {
-                            
+                            controller.playNextSong()
                         }, label: {
                             Image(systemName: "forward.fill")
                                 .font(.system(size: 20, weight: .bold))
@@ -129,49 +137,21 @@ struct MusicPlayView: View {
                     .ignoresSafeArea()
             })
         }
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .font(.system(size: 15))
-                        .foregroundColor(.black)
-                }
-            }
+        .onAppear{
+            controller.updateProcess()
         }
-        .onAppear(perform: {
-            Task{
-               await fetchAndPlayAudio()
-                await controller.playAudio(name: music.name)
-            }
-            controller.isplaying = true
-            
-            
-        })
         .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
             controller.updateProcess()
         }
     }
-    func fetchAndPlayAudio() async {
-        do {
-            let (data,_) = try await URLSession.shared.data(from: URL(string: music.url)!)
-            let audioPlayer = try AVAudioPlayer(data:data)
-            controller.player = audioPlayer
-            controller.totalTime = audioPlayer.duration
-        } catch {
-            print("Error fetching or playing audio:", error)
-        }
-    }
+    
 }
 
 #Preview {
-    MusicPlayView(music: Music(name: "24K Magic",
+    MusicPlayView(controller: MusicController(),
+                  music: Music(name: "24K Magic",
                                singer: "Bruno Mars",
-                               url: "https://firebasestorage.googleapis.com/v0/b/musicapp-acd69.appspot.com/o/Bruno%20Mars%20-%2024K%20Magic%20(Official%20Music%20Video).mp3?alt=media&token=1254de08-d469-4ac8-93f4-d4b02cddc90a",
-                               img :"https://kenh14cdn.com/thumb_w/660/2018/1/31/photo-1-15173842175492010486171.jpg"), currentMusic: "24K Magic"
-                  )
-    .environmentObject(MusicController())
+                               url: "https://firebasestorage.googleapis.com/v0/b/musicapp-acd69.appspot.com/o/24K%20Magic.mp3?alt=media&token=54716ac4-dfc3-4c49-b031-d9b81da36b59",
+                               img :"https://kenh14cdn.com/thumb_w/660/2018/1/31/photo-1-15173842175492010486171.jpg"),currentMusic: "24K Magic"
+    )
 }

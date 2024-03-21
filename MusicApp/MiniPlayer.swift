@@ -10,7 +10,7 @@ import SDWebImageSwiftUI
 struct MiniPlayer: View {
     @Binding var music: Music?
     @EnvironmentObject var controller: MusicController
-    
+    @State var isShowingMusicPlayView = false
     var body: some View {
         NavigationStack{
             VStack {
@@ -20,9 +20,9 @@ struct MiniPlayer: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 55, height: 55)
-                        NavigationLink(destination: MusicPlayView(music: music, currentMusic: music.name)) {
-                            Text(music.name)
-                        }
+                        
+                        Text(music.name)
+                        
                     } else {
                         // Show an empty mini player or hide it (optional)
                     }
@@ -57,6 +57,12 @@ struct MiniPlayer: View {
                     }
                 }
             }
+            .onTapGesture {
+                isShowingMusicPlayView.toggle()
+            }
         }
+        .sheet(isPresented: $isShowingMusicPlayView, content: {
+            MusicPlayView(controller: controller, music: music!, currentMusic: music!.name)
+        })
     }
 }
