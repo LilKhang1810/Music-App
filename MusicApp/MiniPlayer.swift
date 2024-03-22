@@ -20,9 +20,12 @@ struct MiniPlayer: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 55, height: 55)
-                        
-                        Text(music.name)
-                        
+                        VStack(alignment:.leading){
+                            Text(music.name)
+                            Text(music.singer)
+                                .font(.system(size: 14))
+                                .foregroundColor(.gray)
+                        }
                     } else {
                         // Show an empty mini player or hide it (optional)
                     }

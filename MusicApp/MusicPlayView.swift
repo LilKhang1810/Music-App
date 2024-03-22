@@ -24,20 +24,30 @@ struct MusicPlayView: View {
                             .padding(.top)
                             .foregroundColor(.black)
                     }
-                    AnimatedImage(url: URL(string: controller.currentSong?.img ?? ""))
+                    AnimatedImage(url: URL(string: music.img))
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 350,height: 350)
                         .padding()
                     VStack(alignment:.leading){
-                        Text(controller.currentSong?.name ?? "")
+                        Text(music.name)
                             .font(.system(size: 25))
                             .bold()
-                        Text(controller.currentSong?.singer ?? "")
+                        Text(music.singer )
                             .font(.system(size: 18))
                     }
-                    .frame(maxWidth: .infinity,alignment: .leading)
+                    .foregroundColor(.white)
                     .padding()
+                    .frame(maxWidth: 300,alignment: .leading)
+                    .background{
+                        LinearGradient(
+                          colors: [Color.orange, Color.yellow],
+                          startPoint: .topLeading,
+                          endPoint: .bottomTrailing
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                    }
+                    .padding(.trailing,50)
                     VStack{
                         Slider(
                             value:
@@ -67,7 +77,7 @@ struct MusicPlayView: View {
                         }
                         
                         Button(action: {
-                            
+                            playBackSong()
                         }, label: {
                             Image(systemName: "backward.fill")
                                 .font(.system(size: 20, weight: .bold))
@@ -83,7 +93,7 @@ struct MusicPlayView: View {
                                 }
                             } else {
                                 Task {
-                                    await controller.playAudio(name: music.name)
+                                    await controller.playAudio(name:  music.name )
                                 }
                                 controller.isplaying.toggle() // Update isPlaying state
                             }
@@ -114,7 +124,7 @@ struct MusicPlayView: View {
                         })
                         
                         Button(action: {
-                            controller.playNextSong()
+                           playNextSong()
                         }, label: {
                             Image(systemName: "forward.fill")
                                 .font(.system(size: 20, weight: .bold))
@@ -133,18 +143,48 @@ struct MusicPlayView: View {
                 }
             }
             .background(content: {
-                Color("accentColor")
+                AnimatedImage(url: URL(string: music.img))
                     .ignoresSafeArea()
+                    .blur(radius: 40)
+                    .opacity(0.6)
             })
         }
         .onAppear{
             controller.updateProcess()
+            
         }
         .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
             controller.updateProcess()
         }
     }
-    
+    func playNextSong() {
+        // Get the index of the current song
+        guard let currentSongIndex = controller.musics.firstIndex(where: { $0.name == music.name }) else { return }
+
+        // Check if there's a next song
+        let nextSongIndex = (currentSongIndex + 1) % controller.musics.count
+
+        // Update the current song and play it
+        music = controller.musics[nextSongIndex]
+        currentMusic = music.name
+        Task {
+            await controller.fetchAndPlayAudio(url: music.url)
+        }
+      }
+    func playBackSong() {
+        // Get the index of the current song
+        guard let currentSongIndex = controller.musics.firstIndex(where: { $0.name == music.name }) else { return }
+
+        // Check if there's a next song
+        let previousSongIndex = (currentSongIndex - 1) % controller.musics.count
+
+        // Update the current song and play it
+        music = controller.musics[previousSongIndex]
+        currentMusic = music.name
+        Task {
+            await controller.fetchAndPlayAudio(url: music.url)
+        }
+      }
 }
 
 #Preview {

@@ -73,21 +73,7 @@ struct MusicHomeView: View {
             controller.fetchMusicData()
         }
     }
-//    func fetchAndPlayAudio() async {
-//        do {
-//            if let selectedMusic = selectedMusic, let url = URL(string: selectedMusic.url) {
-//                let (data,_) = try await URLSession.shared.data(from: url)
-//                let audioPlayer = try AVAudioPlayer(data:data)
-//                controller.player = audioPlayer
-//                controller.player?.play()
-//                controller.totalTime = audioPlayer.duration
-//            } else {
-//                print("No selected music to play") // Handle case where selectedMusic is nil
-//            }
-//        } catch {
-//            print("Error fetching or playing audio:", error)
-//        }
-//    }
+
 }
 #Preview {
     MusicHomeView()

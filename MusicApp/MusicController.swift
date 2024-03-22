@@ -71,20 +71,4 @@ class MusicController: ObservableObject{
         let seconds = Int(time) % 60
         return String(format: "%02d:%02d", minute, seconds)
     }
-    func playNextSong() -> Music? {
-        guard currentMusicIndex < musics.count - 1 else {
-            print("End of playlist reached")
-            return nil
-        }
-        
-        currentMusicIndex += 1
-        currentSong = musics[currentMusicIndex]
-        
-        // Cập nhật URL của bài hát mới
-        guard let newMusic = currentSong else {
-            return nil
-        }
-        print("Playing next song: \(newMusic.name) by \(newMusic.singer)")
-        return newMusic
-    }
 }
