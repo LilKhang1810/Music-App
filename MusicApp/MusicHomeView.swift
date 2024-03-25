@@ -16,6 +16,12 @@ struct MusicHomeView: View {
         NavigationStack{
             ZStack{
                 ScrollView(showsIndicators: false) {
+                    Image("chill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 300,height: 300)
+                        .cornerRadius(20)
+                        .navigationTitle("My Playlist")
                     VStack{
                         ForEach(controller.musics, id: \.self) { music in
                             Button(
@@ -24,7 +30,7 @@ struct MusicHomeView: View {
                                     controller.currentSong = music
                                     Task{
                                         await controller.fetchAndPlayAudio(url: music.url)
-                                    
+                                        
                                     }
                                     controller.isplaying = true
                                 },
@@ -55,26 +61,21 @@ struct MusicHomeView: View {
                                 })
                             
                         }
-                        
                     }
                     .padding(.bottom,80)
                 }
-                
                 if controller.currentSong != nil {
                     MiniPlayer(controller: controller)
                         .environmentObject(controller)
                         .offset(y:370)
                 }
-                
             }
         }
         .onAppear{
             print(controller.isplaying)
             controller.fetchMusicData()
-            
         }
     }
-
 }
 #Preview {
     MusicHomeView()
