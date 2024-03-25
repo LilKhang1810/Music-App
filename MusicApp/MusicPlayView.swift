@@ -125,6 +125,7 @@ struct MusicPlayView: View {
                         
                         Button(action: {
                            playNextSong()
+                            print(controller.currentSong?.name as Any)
                         }, label: {
                             Image(systemName: "forward.fill")
                                 .font(.system(size: 20, weight: .bold))
@@ -167,6 +168,7 @@ struct MusicPlayView: View {
         // Update the current song and play it
         music = controller.musics[nextSongIndex]
         currentMusic = music.name
+        controller.currentSong = music
         Task {
             await controller.fetchAndPlayAudio(url: music.url)
         }
@@ -181,6 +183,7 @@ struct MusicPlayView: View {
         // Update the current song and play it
         music = controller.musics[previousSongIndex]
         currentMusic = music.name
+        controller.currentSong = music
         Task {
             await controller.fetchAndPlayAudio(url: music.url)
         }

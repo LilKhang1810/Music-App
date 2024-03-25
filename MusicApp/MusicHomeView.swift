@@ -11,7 +11,7 @@ import AVFAudio
 struct MusicHomeView: View {
     @EnvironmentObject var controller: MusicController
     @State var isMiniPlayerPresented = false
-    @State var selectedMusic: Music? = nil
+    
     var body: some View {
         NavigationStack{
             ZStack{
@@ -21,7 +21,7 @@ struct MusicHomeView: View {
                             Button(
                                 action: {
                                     isMiniPlayerPresented = true
-                                    selectedMusic = music
+                                    controller.currentSong = music
                                     Task{
                                         await controller.fetchAndPlayAudio(url: music.url)
                                     
@@ -60,8 +60,8 @@ struct MusicHomeView: View {
                     .padding(.bottom,80)
                 }
                 
-                if selectedMusic != nil {
-                    MiniPlayer(music: $selectedMusic)
+                if controller.currentSong != nil {
+                    MiniPlayer(controller: controller)
                         .environmentObject(controller)
                         .offset(y:370)
                 }
@@ -71,6 +71,7 @@ struct MusicHomeView: View {
         .onAppear{
             print(controller.isplaying)
             controller.fetchMusicData()
+            
         }
     }
 
