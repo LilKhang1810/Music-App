@@ -21,8 +21,8 @@ struct MusicAppApp: App {
     @StateObject var controller: MusicController = MusicController()
     var body: some Scene {
         WindowGroup {
-            MusicHomeView()
-                .environmentObject(MusicController())
+            ContentView()
+                .environmentObject(controller)
         }
     }
 }

@@ -8,36 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var selectedTab = 0
     @EnvironmentObject var controller: MusicController
     var body: some View {
-        ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
-            TabView {
-                MusicHomeView()
-                    .tag(0)
-                    .tabItem {
-                        Image(systemName: "house")
-                            .tag(0)
-                    }
-                Text("Search View")
-                    .tag(0)
-                    .tabItem {
-                        Image(systemName: "magnifyingglass")
-                            .tag(1)
-                    }
-                Text("Profile View")
-                    .tag(0)
-                    .tabItem {
-                        Image(systemName: "person")
-                            .tag(0)
-                    }
-            }
-            
+        GeometryReader{
+            let safeArea = $0.safeAreaInsets
+            let size = $0.size
+            MusicHomeView(size: size, safeArea: safeArea)
+                .environmentObject(controller)
+                .ignoresSafeArea(.container,edges: .top)
         }
+        .preferredColorScheme(.light)
     }
 }
 
 #Preview {
-    ContentView()
+   ContentView()
         .environmentObject(MusicController())
 }
